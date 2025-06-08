@@ -1,8 +1,9 @@
 import flet as ft
 import re
 
+from jira_utils import check_jira_connection
 
-def build_settings_page():
+def get_content():
     def validate_url(url):
         regex = re.compile(
             r'^(?:http|ftp)s?://'  # http:// or https://
@@ -15,12 +16,12 @@ def build_settings_page():
 
     def on_url_submit(e):
         if validate_url(url_input.value):
-            url_input.suffix_icon = ft.icons.CHECK_CIRCLE_OUTLINED
-            url_input.border_color = ft.colors.GREEN
+            url_input.suffix_icon = ft.Icons.CHECK_CIRCLE_OUTLINED
+            url_input.border_color = ft.Сolors.GREEN
             print(f"Valid URL: {url_input.value}")
         else:
-            url_input.border_color = ft.colors.RED
-            url_input.suffix_icon=ft.icons.ERROR_OUTLINE
+            url_input.border_color = ft.Сolors.RED
+            url_input.suffix_icon=ft.Icons.ERROR_OUTLINE
         url_input.update()
 
 
@@ -28,8 +29,8 @@ def build_settings_page():
             label="Введите URL сервера Jira",
             hint_text="https://jira.ursalab.ru/",
             value="https://jira.ursalab.ru/",
-            prefix_icon=ft.icons.LINK,
-            suffix_icon=ft.icons.CHECK_CIRCLE_OUTLINED,
+            prefix_icon=ft.Icons.LINK,
+            suffix_icon=ft.Icons.CHECK_CIRCLE_OUTLINED,
             keyboard_type=ft.KeyboardType.URL,
             border=ft.InputBorder.OUTLINE,
             border_radius=10,
@@ -42,12 +43,12 @@ def build_settings_page():
         api_key = api_key_input.value
         pattern = r'^[a-zA-Z0-9]{12,16}[a-zA-Z0-9]{20,30}$'
         if re.match(pattern, api_key):
-            api_key_input.suffix_icon = ft.icons.CHECK_CIRCLE_OUTLINED
-            api_key_input.border_color = ft.colors.GREEN
+            api_key_input.suffix_icon = ft.Icons.CHECK_CIRCLE_OUTLINED
+            api_key_input.border_color = ft.Colors.GREEN
             print(ft.Text(f"Валидный API-ключ: {api_key}"))
         else:
-            api_key_input.border_color = ft.colors.RED
-            #api_key_input.suffix_icon=ft.icons.ERROR_OUTLINE
+            api_key_input.border_color = ft.Сolors.RED
+            #api_key_input.suffix_icon=ft.Icons.ERROR_OUTLINE
         api_key_input.update()
 
     # Поле ввода API-ключа
@@ -60,6 +61,12 @@ def build_settings_page():
         on_submit=validate_api_key,
     )
 
+    def test_jira_connect(e):
+        check_jira_connection(url_input.value, "pliev@ursalab.ru", api_key_input.value)
+        print("ass")
+
+    button_test_connect = ft.ElevatedButton("Проверить подключение", on_click=test_jira_connect)
+
     page = ft.Tabs(
         selected_index=0,
         animation_duration=300,
@@ -69,7 +76,7 @@ def build_settings_page():
                 icon=ft.Icons.LINK ,
                 content=ft.Container(
                     content=ft.Column(
-                        controls=[url_input,api_key_input],
+                        controls=[url_input,api_key_input,button_test_connect],
                         alignment=ft.alignment.center,
                         spacing=20,
                     ),

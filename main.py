@@ -1,23 +1,27 @@
 import flet as ft
-import pages as pg
+import pages.tracker as traker_page
+import pages.intervals as intervals_page
+import pages.settings as settings_page
+from lang.Translator import Translator
+
 
 def main(page: ft.Page):
 
-    page.title = "Учет времени"
+    txt = Translator("en")
 
-    # Контейнер для отображения текущей страницы
-    content = ft.Container()
+    page.title = txt.translate("main_page_title")
 
-    # Функция для обработки смены страницы
+    container = ft.Container()
+
     def on_navigation_change(e):
         selected_index = e.control.selected_index
-        content.content = None  # Очищаем содержимое
+        container.content = None
         if selected_index == 0:
-            content.content = pg.build_tracker_page()
+            container.content = traker_page.get_content()
         elif selected_index == 1:
-            content.content = pg.build_interval_page()
+            container.content = intervals_page.get_content()
         elif selected_index == 2:
-            content.content = pg.build_settings_page()
+            container.content = settings_page.get_content()
         page.update()
 
 
@@ -28,13 +32,13 @@ def main(page: ft.Page):
             ft.NavigationBarDestination(icon=ft.Icons.SETTINGS_APPLICATIONS,label="Настройки"),
         ],
         on_change = on_navigation_change,
-        selected_index = 0  # Начальная страница
+        selected_index = 0  # default page
     )
 
     # Инициализация начальной страницы
-    content.content = pg.build_tracker_page()
+    container.content = traker_page.get_content()
 
     # Добавляем контейнер на страницу
-    page.add(content)
+    page.add(container)
 
 ft.app(target=main)
